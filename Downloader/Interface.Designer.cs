@@ -88,12 +88,6 @@
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
-            // Downloader
-            // 
-            this.Downloader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Downloader_DoWork);
-            this.Downloader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.Downloader_ProgressChanged);
-            this.Downloader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.Downloader_RunWorkerCompleted);
-            // 
             // Interface
             // 
             this.ClientSize = new System.Drawing.Size(429, 313);
@@ -113,13 +107,13 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnDownload;
-        private System.Windows.Forms.ListBox lstLinks;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtLink;
-        private System.Windows.Forms.Button btnAdd;
         private System.ComponentModel.BackgroundWorker Downloader;
         public System.Windows.Forms.ProgressBar progDownload;
+        public System.Windows.Forms.ListBox lstLinks;
+        public System.Windows.Forms.TextBox txtLink;
+        public System.Windows.Forms.Button btnDownload;
+        public System.Windows.Forms.Button btnAdd;
     }
 }
 

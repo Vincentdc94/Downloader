@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Download.cs" />
+    <Compile Include="DownloadHandler.cs" />
     <Compile Include="Interface.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -12,43 +12,52 @@ namespace Downloader
 {
     public partial class Interface : Form
     {
-        
-        List<Download> downloads;
+        DownloadHandler downloadHandler;
+        public delegate void updateProgress(int i);
+        public updateProgress updateProgressDelegate;
 
         public Interface()
         {
             InitializeComponent();
+            downloadHandler = new DownloadHandler(this);
+            updateProgressDelegate = new updateProgress(updateProgressMethod);
+        }
+
+        public void updateProgressMethod(int i)
+        {
+            progDownload.Value = i;
+            if (i == progDownload.Maximum)
+            {
+                btnAdd.Enabled = true;
+                btnDownload.Enabled = true;
+                MessageBox.Show(
+                    "Downloads are completed",
+                    "Notification",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
         }
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            //Validates listbox for items
-            if (lstLinks.Items.Count <= 0)
+            int items_count = lstLinks.Items.Count;
+            string[] items = new string[items_count];
+
+            if (items_count <= 0)
             {
                 MessageBox.Show("Provide me a link please!");
                 return;
             }
 
-            /*
-            *  Note: i'm not commenting anything which involves the Download class, it will be explained later 
-            */
+            for(int i = 0; i < items_count; i++)
+            {
+                items[i] = (string) lstLinks.Items[i];
+            }
 
-            //This list contains all downloads which will be used later
-            downloads = new List<Download>();
-          
-            //defines which value is the maximum one for our progressbar
-            progDownload.Maximum = lstLinks.Items.Count;
-            
-            for (int i = 0; i < lstLinks.Items.Count; i++)
-                downloads.Add(new Download(lstLinks.Items[i].ToString()));
-            
-                
-
+            progDownload.Maximum = items_count;
             btnAdd.Enabled = false;
             btnDownload.Enabled = false;
-
-            if(downloads.Count > 0)
-                Downloader.RunWorkerAsync(Downloader);
+            downloadHandler.startDownload(items_count, items);
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -63,59 +72,6 @@ namespace Downloader
                 MessageBox.Show("The URL is invalid", "Oops!");
             }
                   
-        }
-
-        private void Downloader_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Downloader.WorkerReportsProgress = true;
-            WebClient client = new WebClient();
-
-            for (int i = 0; i < downloads.Count; i++)
-            {
-                string link = downloads[i].downloadLink;
-                string filename = downloads[i].deriveFileName();
-
-                //if something went wrong in getting the filename, the link must not be a downloadlink
-                if (filename == null)
-                {
-                    MessageBox.Show("Invalid download link");
-                    break;
-                }
-                
-                //try downloading the file
-                try
-                {
-                    client.DownloadFile(link, filename);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("File could not be downloaded for numerous reasons");
-                    break;
-                }
-                
-                //report progress of the backgroundworker
-                Downloader.ReportProgress((i / downloads.Count)*100, downloads.Count);
-                
-            }
-        
-        }
-
-        private void Downloader_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //show the progress of the backgroundworker in a progressbar
-            Int32 arg = (Int32)e.UserState;
-            progDownload.Value = arg;
-        }
-
-        private void Downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            btnAdd.Enabled = true;
-            btnDownload.Enabled = true;
-            MessageBox.Show(
-                "Downloads are completed",
-                "Notification",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
         }
     }
 }

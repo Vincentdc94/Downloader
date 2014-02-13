@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,7 @@ namespace Downloader
         {
             try
             {
-                Uri url = new Uri(downloadLink);
+                Uri url = new Uri(this.downloadLink);
 
                 /*
                  * get path from the file if it's not a file, find it in the url. 
@@ -55,10 +56,13 @@ namespace Downloader
                     return downloadLink.Substring(last_pos_slash, downloadLink.Length - last_pos_slash);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                MessageBox.Show(e.Message);
                 return null; 
             }
         }
+
+        
     }
 }
